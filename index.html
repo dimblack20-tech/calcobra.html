@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>CalcObra &amp; Frota — Concreto, Asfalto, Valas &amp; Combustível</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273549;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #f97316;
+      --accent-hover: #ea580c;
+      --accent-soft: rgba(249, 115, 22, 0.15);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.15);
+      --info: #38bdf8;
+      --info-soft: rgba(56, 189, 248, 0.15);
+      --whatsapp: #22c55e;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      padding-bottom: 32px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: block;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--surface-2);
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: var(--surface);
+      padding: 6px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      padding: 10px 6px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Cards & Forms */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 11px 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--accent);
+    }
+
+    /* Quick Chips */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Segmented toggle */
+    .seg-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+
+    .seg-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      padding: 7px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .seg-btn.active {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    /* Results Box */
+    .result-card {
+      background: linear-gradient(180deg, var(--surface) 0%, #162032 100%);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .result-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .metric {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .metric.highlight {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .metric.success-box {
+      border-color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .metric.info-box {
+      border-color: var(--info);
+      background: var(--info-soft);
+    }
+
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .metric.highlight .metric-value {
+      color: var(--accent);
+    }
+
+    .metric.success-box .metric-value {
+      color: #6ee7b7;
+    }
+
+    .metric.info-box .metric-value {
+      color: #7dd3fc;
+    }
+
+    .metric-sub {
+      font-size: 0.73rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Action Buttons */
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.15s;
+    }
+
+    .btn:active {
+      opacity: 0.8;
+    }
+
+    .btn-copy {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-wa {
+      background: var(--whatsapp);
+      color: #052e16;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text);
+      color: var(--bg);
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 50;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">🚧</div>
+        <div>
+          <h1>CalcObra &amp; Frota</h1>
+          <span>Concreto, Asfalto, Valas &amp; Rotas</span>
+        </div>
+      </div>
+      <div class="badge">OFFLINE OK</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Navegação por Abas -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('massa', this)">1. Massa &amp; Asfalto</button>
+      <button class="tab-btn" onclick="switchTab('valas', this)">2. Valas &amp; Solo</button>
+      <button class="tab-btn" onclick="switchTab('frota', this)">3. Frota &amp; Flex</button>
+    </div>
+
+    <!-- ==================== ABA 1: CONCRETO, MASSA & ASFALTO ==================== -->
+    <div id="tab-massa" class="tab-panel active">
+      <div class="card">
+        <div class="card-title">Tipo de Serviço &amp; Medidas</div>
+
+        <div class="form-group">
+          <label>Material / Aplicação</label>
+          <select id="massa-tipo" onchange="calcMassa()">
+            <option value="concreto" selected>Concreto Base / Coluna (Traço 1:2:3)</option>
+            <option value="calcada">Calçada / Contrapiso (Traço 1:3:4)</option>
+            <option value="asfalto">Massa Asfáltica / CBUQ (2.400 kg/m³)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Atalhos Rápidos</label>
+          <div class="chips" id="chips-massa-preset">
+            <button type="button" class="chip active" onclick="setMassaPreset('concreto', 0.4, 0.4, 80, 1)">Base 40×40×80cm</button>
+            <button type="button" class="chip" onclick="setMassaPreset('asfalto', 1.0, 1.0, 5, 1)">Tapa-Buraco 1×1m</button>
+            <button type="button" class="chip" onclick="setMassaPreset('calcada', 4.0, 1.2, 7, 1)">Calçada 4×1,2m</button>
+          </div>
+        </div>
+
+        <div class="row-3 form-group">
+          <div>
+            <label>Comprim. (m)</label>
+            <input type="number" id="massa-comp" value="0.4" min="0.01" step="any" oninput="calcMassa()" />
+          </div>
+          <div>
+            <label>Largura (m)</label>
+            <input type="number" id="massa-larg" value="0.4" min="0.01" step="any" oninput="calcMassa()" />
+          </div>
+          <div>
+            <label>Espessura (cm)</label>
+            <input type="number" id="massa-esp" value="80" min="0.5" step="any" oninput="calcMassa()" />
+          </div>
+        </div>
+
+        <div class="row-2 form-group">
+          <div>
+            <label>Qtd. de Pontos / Bases</label>
+            <input type="number" id="massa-qtd" value="1" min="1" step="1" oninput="calcMassa()" />
+          </div>
+          <div>
+            <label>Margem de Perda (%)</label>
+            <select id="massa-perda" onchange="calcMassa()">
+              <option value="5">5% (Corte limpo)</option>
+              <option value="10" selected>10% (Padrão obra)</option>
+              <option value="15">15% (Solo irregular)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="card-title">Material Necessário (com Perda)</div>
+
+        <div class="result-grid">
+          <div class="metric highlight">
+            <div class="metric-label">Volume Total</div>
+            <div class="metric-value" id="res-massa-m3">0,141 m³</div>
+            <div class="metric-sub" id="res-massa-litros">141 Litros (líq: 0,128 m³)</div>
+          </div>
+          <div class="metric highlight">
+            <div class="metric-label" id="lbl-massa-main">Cimento (50 kg)</div>
+            <div class="metric-value" id="res-massa-main">1 saco</div>
+            <div class="metric-sub" id="sub-massa-main">Exato: 0,99 sacos</div>
+          </div>
+        </div>
+
+        <div class="result-grid" id="grid-massa-sec">
+          <div class="metric">
+            <div class="metric-label" id="lbl-massa-sec1">Areia Média</div>
+            <div class="metric-value" id="res-massa-sec1">0,079 m³</div>
+            <div class="metric-sub" id="sub-massa-sec1">~4 latas de 18L</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label" id="lbl-massa-sec2">Pedra Brita 1</div>
+            <div class="metric-value" id="res-massa-sec2">0,118 m³</div>
+            <div class="metric-sub" id="sub-massa-sec2">~7 latas de 18L</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-copy" onclick="copySummary('massa')">📋 Copiar Resumo</button>
+          <button type="button" class="btn btn-wa" onclick="sendWhatsApp('massa')">📲 WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== ABA 2: VALAS, BRITA & SOLO ==================== -->
+    <div id="tab-valas" class="tab-panel">
+      <div class="card">
+        <div class="card-title">Dimensionamento de Vala / Caixa</div>
+
+        <div class="form-group">
+          <label>Tipo de Material</label>
+          <select id="vala-mat" onchange="onValaMatChange()">
+            <option value="terra" selected>Escavação / Terra (Empolamento +25%)</option>
+            <option value="brita">Pedra Britada (Compactação +10%)</option>
+            <option value="areia">Areia Média / Fina (Compactação +10%)</option>
+            <option value="bica">Bica Corrida / Rachão (Compactação +15%)</option>
+          </select>
+        </div>
+
+        <div class="row-3 form-group">
+          <div>
+            <label>Comprim. (m)</label>
+            <input type="number" id="vala-comp" value="10" min="0.1" step="any" oninput="calcVala()" />
+          </div>
+          <div>
+            <label>Largura (m)</label>
+            <input type="number" id="vala-larg" value="0.4" min="0.05" step="any" oninput="calcVala()" />
+          </div>
+          <div>
+            <label>Profund. (cm)</label>
+            <input type="number" id="vala-prof" value="50" min="1" step="any" oninput="calcVala()" />
+          </div>
+        </div>
+
+        <div class="row-2 form-group">
+          <div>
+            <label>Fator Empol./Comp. (%)</label>
+            <input type="number" id="vala-fator" value="25" min="0" max="100" step="1" oninput="calcVala()" />
+          </div>
+          <div>
+            <label>Capacidade Caçamba (m³)</label>
+            <select id="vala-cacamba" onchange="calcVala()">
+              <option value="4" selected>4 m³ (Caçamba padrão)</option>
+              <option value="5">5 m³ (Caçamba grande)</option>
+              <option value="12">12 m³ (Caminhão Truck)</option>
+              <option value="14">14 m³ (Caminhão Basculante)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="card-title">Volume &amp; Transporte</div>
+
+        <div class="result-grid">
+          <div class="metric highlight">
+            <div class="metric-label">Volume Final (Solto/Pedido)</div>
+            <div class="metric-value" id="res-vala-vol-final">2,50 m³</div>
+            <div class="metric-sub" id="res-vala-vol-geo">Corte geométrico: 2,00 m³</div>
+          </div>
+          <div class="metric highlight">
+            <div class="metric-label">Peso Estimado</div>
+            <div class="metric-value" id="res-vala-ton">3,20 t</div>
+            <div class="metric-sub" id="res-vala-kg">3.200 kg aproximados</div>
+          </div>
+        </div>
+
+        <div class="metric" style="margin-bottom: 12px;">
+          <div class="metric-label">Caçambas / Viagens Necessárias</div>
+          <div class="metric-value" style="font-size: 1.05rem;" id="res-vala-viagens">1 caçamba de 4 m³ (63% ocupada)</div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-copy" onclick="copySummary('valas')">📋 Copiar Resumo</button>
+          <button type="button" class="btn btn-wa" onclick="sendWhatsApp('valas')">📲 WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== ABA 3: COMBUSTÍVEL & FLEX ==================== -->
+    <div id="tab-frota" class="tab-panel">
+      <div class="card">
+        <div class="card-title">Custo de Deslocamento / Rota</div>
+
+        <div class="form-group">
+          <label>Trajeto</label>
+          <div class="seg-toggle">
+            <button type="button" id="btn-rota-ida" class="seg-btn" onclick="setRotaTipo(false)">Só Ida</button>
+            <button type="button" id="btn-rota-iv" class="seg-btn active" onclick="setRotaTipo(true)">Ida e Volta (×2)</button>
+          </div>
+        </div>
+
+        <div class="row-2 form-group">
+          <div>
+            <label>Distância Trecho (km)</label>
+            <input type="number" id="frota-km" value="35" min="0.1" step="any" oninput="calcFrota()" />
+          </div>
+          <div>
+            <label>Pedágios / Extras (R$)</label>
+            <input type="number" id="frota-extra" value="0" min="0" step="0.5" oninput="calcFrota()" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Consumo Médio do Veículo (km/l)</label>
+          <div class="chips" id="chips-kml">
+            <button type="button" class="chip" onclick="setKml(7.5)">7,5 km/l</button>
+            <button type="button" class="chip active" onclick="setKml(10.5)">10,5 km/l</button>
+            <button type="button" class="chip" onclick="setKml(13.5)">13,5 km/l</button>
+            <button type="button" class="chip" onclick="setKml(32)">32 km/l (Moto)</button>
+          </div>
+          <div class="row-2">
+            <div>
+              <label>Consumo (km/l)</label>
+              <input type="number" id="frota-kml" value="10.5" min="0.5" step="0.1" oninput="calcFrota()" />
+            </div>
+            <div>
+              <label>Preço Combustível (R$/L)</label>
+              <input type="number" id="frota-preco" value="6.19" min="0.1" step="0.01" oninput="calcFrota()" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="card-title">Resumo da Viagem</div>
+
+        <div class="result-grid">
+          <div class="metric highlight">
+            <div class="metric-label">Custo Total</div>
+            <div class="metric-value" id="res-frota-custo">R$ 41,27</div>
+            <div class="metric-sub" id="res-frota-km-custo">R$ 0,59 / km rodado</div>
+          </div>
+          <div class="metric highlight">
+            <div class="metric-label">Combustível Gasto</div>
+            <div class="metric-value" id="res-frota-litros">6,67 L</div>
+            <div class="metric-sub" id="res-frota-dist">Distância total: 70 km</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-copy" onclick="copySummary('frota')">📋 Copiar Resumo</button>
+          <button type="button" class="btn btn-wa" onclick="sendWhatsApp('frota')">📲 WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- Comparador Flex -->
+      <div class="card">
+        <div class="card-title">Calculadora Flex (Etanol × Gasolina)</div>
+        <div class="row-2 form-group">
+          <div>
+            <label>Preço Etanol (R$/L)</label>
+            <input type="number" id="flex-etanol" value="4.19" min="0.1" step="0.01" oninput="calcFlex()" />
+          </div>
+          <div>
+            <label>Preço Gasolina (R$/L)</label>
+            <input type="number" id="flex-gas" value="6.19" min="0.1" step="0.01" oninput="calcFlex()" />
+          </div>
+        </div>
+
+        <div id="box-flex-res" class="metric success-box" style="margin-top: 8px;">
+          <div class="metric-label" id="res-flex-pct">Relação: 67,7% (Limite 70%)</div>
+          <div class="metric-value" id="res-flex-veredito">✅ Compensa ETANOL</div>
+          <div class="metric-sub" id="res-flex-eco">Economia estimada de R$ 8,10 a cada 40L de gasolina equiv.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Resumo copiado!</div>
+
+  <script>
+    let summaries = { massa: '', valas: '', frota: '' };
+    let idaEVolta = true;
+
+    function fmt(num, dec = 2) {
+      return num.toLocaleString('pt-BR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+    }
+
+    function switchTab(tabName, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ==================== ABA 1: MASSA & ASFALTO ====================
+    function setMassaPreset(tipo, comp, larg, esp, qtd) {
+      document.getElementById('massa-tipo').value = tipo;
+      document.getElementById('massa-comp').value = comp;
+      document.getElementById('massa-larg').value = larg;
+      document.getElementById('massa-esp').value = esp;
+      document.getElementById('massa-qtd').value = qtd;
+
+      document.querySelectorAll('#chips-massa-preset .chip').forEach((c, idx) => {
+        const match = (tipo === 'concreto' && idx === 0) ||
+                      (tipo === 'asfalto' && idx === 1) ||
+                      (tipo === 'calcada' && idx === 2);
+        c.classList.toggle('active', match);
+      });
+
+      calcMassa();
+    }
+
+    function calcMassa() {
+      const tipo = document.getElementById('massa-tipo').value;
+      const comp = parseFloat(document.getElementById('massa-comp').value) || 0;
+      const larg = parseFloat(document.getElementById('massa-larg').value) || 0;
+      const espCm = parseFloat(document.getElementById('massa-esp').value) || 0;
+      const qtd = parseInt(document.getElementById('massa-qtd').value) || 1;
+      const perdaPct = parseFloat(document.getElementById('massa-perda').value) || 0;
+
+      if (comp <= 0 || larg <= 0 || espCm <= 0 || qtd <= 0) return;
+
+      const volLiq = comp * larg * (espCm / 100) * qtd;
+      const volTotal = volLiq * (1 + perdaPct / 100);
+      const litrosTotal = volTotal * 1000;
+
+      document.getElementById('res-massa-m3').textContent = `${fmt(volTotal, 3)} m³`;
+      document.getElementById('res-massa-litros').textContent = `${fmt(litrosTotal, 0)} Litros (líq: ${fmt(volLiq, 3)} m³)`;
+
+      const lblMain = document.getElementById('lbl-massa-main');
+      const resMain = document.getElementById('res-massa-main');
+      const subMain = document.getElementById('sub-massa-main');
+
+      const lblSec1 = document.getElementById('lbl-massa-sec1');
+      const resSec1 = document.getElementById('res-massa-sec1');
+      const subSec1 = document.getElementById('sub-massa-sec1');
+
+      const lblSec2 = document.getElementById('lbl-massa-sec2');
+      const resSec2 = document.getElementById('res-massa-sec2');
+      const subSec2 = document.getElementById('sub-massa-sec2');
+
+      if (tipo === 'asfalto') {
+        const kgTotal = volTotal * 2400;
+        const tonTotal = kgTotal / 1000;
+        const sacos25 = Math.ceil(kgTotal / 25);
+
+        lblMain.textContent = 'Peso Massa CBUQ';
+        resMain.textContent = kgTotal >= 1000 ? `${fmt(tonTotal, 2)} t` : `${fmt(kgTotal, 0)} kg`;
+        subMain.textContent = `${fmt(kgTotal, 0)} kg (${fmt(tonTotal, 3)} ton)`;
+
+        lblSec1.textContent = 'Asfalto Frio (Saco 25kg)';
+        resSec1.textContent = `${sacos25} ${sacos25 === 1 ? 'saco' : 'sacos'}`;
+        subSec1.textContent = `Para reparo ensacado`;
+
+        lblSec2.textContent = 'Área Coberta';
+        const areaTot = comp * larg * qtd;
+        resSec2.textContent = `${fmt(areaTot, 2)} m²`;
+        subSec2.textContent = `Espessura: ${espCm} cm`;
+
+        summaries.massa =
+          `🚧 *CalcObra — Massa Asfáltica (CBUQ)*\n` +
+          `• Medidas: ${qtd}× (${comp}m × ${larg}m × ${espCm}cm) + ${perdaPct}% perda\n` +
+          `• Volume total: *${fmt(volTotal, 3)} m³*\n` +
+          `• Peso estimado: *${fmt(kgTotal, 0)} kg* (${fmt(tonTotal, 2)} t)\n` +
+          `• Se ensacado (25 kg): *${sacos25} sacos*`;
+      } else {
+        // Traço 1:2:3 (7 sacos cimento, 0.56 m³ areia, 0.84 m³ brita por m³)
+        // Traço 1:3:4 (5.5 sacos cimento, 0.66 m³ areia, 0.88 m³ brita por m³)
+        const coefCim = tipo === 'concreto' ? 7.0 : 5.5;
+        const coefAreia = tipo === 'concreto' ? 0.56 : 0.66;
+        const coefBrita = tipo === 'concreto' ? 0.84 : 0.88;
+
+        const sacosExatos = volTotal * coefCim;
+        const sacosInt = Math.ceil(sacosExatos);
+        const areiaM3 = volTotal * coefAreia;
+        const britaM3 = volTotal * coefBrita;
+        const latasAreia = Math.ceil((areiaM3 * 1000) / 18);
+        const latasBrita = Math.ceil((britaM3 * 1000) / 18);
+
+        lblMain.textContent = 'Cimento (50 kg)';
+        resMain.textContent = `${sacosInt} ${sacosInt === 1 ? 'saco' : 'sacos'}`;
+        subMain.textContent = `Exato: ${fmt(sacosExatos, 2)} sacos`;
+
+        lblSec1.textContent = 'Areia Média';
+        resSec1.textContent = `${fmt(areiaM3, 3)} m³`;
+        subSec1.textContent = `~${latasAreia} latas de 18L`;
+
+        lblSec2.textContent = 'Pedra Brita 1';
+        resSec2.textContent = `${fmt(britaM3, 3)} m³`;
+        subSec2.textContent = `~${latasBrita} latas de 18L`;
+
+        const nomeServico = tipo === 'concreto' ? 'Concreto Base (1:2:3)' : 'Calçada/Contrapiso (1:3:4)';
+        summaries.massa =
+          `🏗️ *CalcObra — ${nomeServico}*\n` +
+          `• Medidas: ${qtd}× (${comp}m × ${larg}m × ${espCm}cm) + ${perdaPct}% perda\n` +
+          `• Volume total: *${fmt(volTotal, 3)} m³*\n` +
+          `• Cimento (50 kg): *${sacosInt} sacos*\n` +
+          `• Areia: *${fmt(areiaM3, 3)} m³* (~${latasAreia} latas 18L)\n` +
+          `• Brita: *${fmt(britaM3, 3)} m³* (~${latasBrita} latas 18L)`;
+      }
+    }
+
+    // ==================== ABA 2: VALAS & SOLO ====================
+    const DADOS_SOLO = {
+      terra: { nome: 'Escavação / Terra', fator: 25, dens: 1600 },
+      brita: { nome: 'Pedra Britada', fator: 10, dens: 1500 },
+      areia: { nome: 'Areia Média/Fina', fator: 10, dens: 1550 },
+      bica:  { nome: 'Bica Corrida / Rachão', fator: 15, dens: 1800 }
+    };
+
+    function onValaMatChange() {
+      const mat = document.getElementById('vala-mat').value;
+      document.getElementById('vala-fator').value = DADOS_SOLO[mat].fator;
+      calcVala();
+    }
+
+    function calcVala() {
+      const mat = document.getElementById('vala-mat').value;
+      const comp = parseFloat(document.getElementById('vala-comp').value) || 0;
+      const larg = parseFloat(document.getElementById('vala-larg').value) || 0;
+      const profCm = parseFloat(document.getElementById('vala-prof').value) || 0;
+      const fatorPct = parseFloat(document.getElementById('vala-fator').value) || 0;
+      const capCacamba = parseFloat(document.getElementById('vala-cacamba').value) || 4;
+
+      if (comp <= 0 || larg <= 0 || profCm <= 0) return;
+
+      const volGeo = comp * larg * (profCm / 100);
+      const volFinal = volGeo * (1 + fatorPct / 100);
+      // Peso baseado no volume geométrico compactado para aterro ou densidade solta para terra
+      const dens = DADOS_SOLO[mat].dens;
+      const kg = (mat === 'terra' ? volGeo : volFinal) * dens;
+      const ton = kg / 1000;
+
+      const viagensExatas = volFinal / capCacamba;
+      const viagensInt = Math.ceil(viagensExatas);
+      const ocupacaoUltima = Math.round(((volFinal % capCacamba || capCacamba) / capCacamba) * 100);
+
+      document.getElementById('res-vala-vol-final').textContent = `${fmt(volFinal, 2)} m³`;
+      document.getElementById('res-vala-vol-geo').textContent = `Corte geométrico: ${fmt(volGeo, 2)} m³`;
+      document.getElementById('res-vala-ton').textContent = `${fmt(ton, 2)} t`;
+      document.getElementById('res-vala-kg').textContent = `${fmt(kg, 0)} kg aproximados`;
+      document.getElementById('res-vala-viagens').textContent =
+        `${viagensInt} ${viagensInt === 1 ? 'viagem' : 'viagens'} de ${capCacamba} m³ (${ocupacaoUltima}% na última)`;
+
+      summaries.valas =
+        `🚜 *CalcObra — ${DADOS_SOLO[mat].nome}*\n` +
+        `• Vala: ${comp}m × ${larg}m × ${profCm}cm\n` +
+        `• Volume geométrico: ${fmt(volGeo, 2)} m³\n` +
+        `• Volume final (+${fatorPct}%): *${fmt(volFinal, 2)} m³*\n` +
+        `• Peso estimado: *${fmt(ton, 2)} t* (${fmt(kg, 0)} kg)\n` +
+        `• Transporte: *${viagensInt}× caçamba/caminhão de ${capCacamba} m³*`;
+    }
+
+    // ==================== ABA 3: FROTA & FLEX ====================
+    function setRotaTipo(isIdaVolta) {
+      idaEVolta = isIdaVolta;
+      document.getElementById('btn-rota-ida').classList.toggle('active', !isIdaVolta);
+      document.getElementById('btn-rota-iv').classList.toggle('active', isIdaVolta);
+      calcFrota();
+    }
+
+    function setKml(val) {
+      document.getElementById('frota-kml').value = val;
+      document.querySelectorAll('#chips-kml .chip').forEach(c => {
+        c.classList.toggle('active', c.textContent.startsWith(fmt(val, val % 1 === 0 ? 0 : 1)));
+      });
+      calcFrota();
+    }
+
+    function calcFrota() {
+      const kmTrecho = parseFloat(document.getElementById('frota-km').value) || 0;
+      const extra = parseFloat(document.getElementById('frota-extra').value) || 0;
+      const kml = parseFloat(document.getElementById('frota-kml').value) || 0;
+      const preco = parseFloat(document.getElementById('frota-preco').value) || 0;
+
+      if (kmTrecho <= 0 || kml <= 0) return;
+
+      const distTotal = idaEVolta ? kmTrecho * 2 : kmTrecho;
+      const litros = distTotal / kml;
+      const custoComb = litros * preco;
+      const custoTotal = custoComb + extra;
+      const custoKm = custoTotal / distTotal;
+
+      document.getElementById('res-frota-custo').textContent = `R$ ${fmt(custoTotal, 2)}`;
+      document.getElementById('res-frota-km-custo').textContent = `R$ ${fmt(custoKm, 2)} / km rodado`;
+      document.getElementById('res-frota-litros').textContent = `${fmt(litros, 2)} L`;
+      document.getElementById('res-frota-dist').textContent = `Distância total: ${fmt(distTotal, 1)} km`;
+
+      summaries.frota =
+        `🚗 *CalcFrota — Custo de Deslocamento*\n` +
+        `• Trajeto: ${fmt(distTotal, 1)} km (${idaEVolta ? 'Ida e Volta' : 'Só Ida'})\n` +
+        `• Consumo médio: ${fmt(kml, 1)} km/l → *${fmt(litros, 2)} litros*\n` +
+        `• Combustível (R$ ${fmt(preco, 2)}/L): R$ ${fmt(custoComb, 2)}` +
+        (extra > 0 ? `\n• Pedágios/Extras: R$ ${fmt(extra, 2)}` : '') +
+        `\n• Custo total: *R$ ${fmt(custoTotal, 2)}* (R$ ${fmt(custoKm, 2)}/km)`;
+    }
+
+    function calcFlex() {
+      const etanol = parseFloat(document.getElementById('flex-etanol').value) || 0;
+      const gas = parseFloat(document.getElementById('flex-gas').value) || 0;
+      if (etanol <= 0 || gas <= 0) return;
+
+      const relacao = (etanol / gas) * 100;
+      const box = document.getElementById('box-flex-res');
+      const pctEl = document.getElementById('res-flex-pct');
+      const verEl = document.getElementById('res-flex-veredito');
+      const ecoEl = document.getElementById('res-flex-eco');
+
+      pctEl.textContent = `Relação: ${fmt(relacao, 1)}% (Ponto de virada: 70%)`;
+
+      if (relacao <= 70) {
+        box.className = 'metric success-box';
+        verEl.textContent = '✅ Compensa ETANOL';
+        // Para rodar o mesmo que 40L de gasolina, precisa de ~57,14L de etanol
+        const eco40 = (40 * gas) - ((40 / 0.7) * etanol);
+        ecoEl.textContent = `Economia de ~R$ ${fmt(Math.max(0, eco40), 2)} a cada tanque (equiv. 40L gas.)`;
+      } else {
+        box.className = 'metric info-box';
+        verEl.textContent = '⛽ Compensa GASOLINA';
+        const eco40 = ((40 / 0.7) * etanol) - (40 * gas);
+        ecoEl.textContent = `Economia de ~R$ ${fmt(Math.max(0, eco40), 2)} a cada tanque de 40L`;
+      }
+    }
+
+    // ==================== COMPARTILHAMENTO ====================
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    function copySummary(tipo) {
+      const text = summaries[tipo];
+      if (!text) return;
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => showToast('Resumo copiado!'));
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Resumo copiado!');
+      }
+    }
+
+    function sendWhatsApp(tipo) {
+      const text = summaries[tipo];
+      if (!text) return;
+      const url = 'https://wa.me/?text=' + encodeURIComponent(text);
+      window.open(url, '_blank');
+    }
+
+    // Inicializa
+    calcMassa();
+    calcVala();
+    calcFrota();
+    calcFlex();
+  </script>
+</body>
+</html>
